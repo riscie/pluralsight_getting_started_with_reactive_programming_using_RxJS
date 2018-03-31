@@ -1,22 +1,22 @@
 import { Observable } from "rxjs";
 
-let numbers = [1, 2, 40, 66, 98];
-let source = Observable.create(observer => {
-    let index = 0;
-    let produceValue = () => {
-        observer.next(numbers[index++]);
-        if (index < numbers.length) {
-            setTimeout(produceValue, 2000)
-        } else {
-            observer.complete();
-        }
-    };
-    produceValue();
-});
+let circle = document.getElementById('circle');
 
+let source = Observable.fromEvent(document, "mousemove")
+    .map((e: MouseEvent) => ({x: e.clientX, y: e.clientY}))
+    .filter(value => value.x < 500)
+    .delay(300);
+
+console.log(circle.style.left);
+
+function onNext(value) {
+    console.log(value);
+    circle.style.left = `${value.x}px`;
+    circle.style.top = `${value.y}px`;
+}
 
 source.subscribe(
-    value => console.log(`value: ${value}`),
+    onNext,
     err => console.log(`error: ${err}`),
     () => console.log('complete')
 );
