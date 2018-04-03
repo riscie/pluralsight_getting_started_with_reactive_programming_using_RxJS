@@ -1,32 +1,16 @@
 import { Observable } from "rxjs";
 
-let output = document.getElementById('output');
-let button = document.getElementById('button');
+let visitors = ["Namita", "Amit", "Rohit", "Neetika"];
+let source = Observable.from(visitors)
+    .map(v => Observable.of('Hello ' + v));
 
+source.mergeAll()
+    .subscribe(v => console.log(v));
 
-let click = Observable.fromEvent(document, "click");
-
-function load(url: string) {
-    return Observable.create(observer => {
-        let xhr = new XMLHttpRequest();
-
-        xhr.addEventListener("load", () => {
-            let data = JSON.parse(xhr.responseText);
-            observer.next(data);
-            observer.complete();
-        });
-        xhr.open("GET", url);
-        xhr.send();
-    })
-}
-
-function renderMovies(movies) {
-    movies.forEach(m => {
-        let div = document.createElement("div");
-        div.innerText = m.title;
-        output.appendChild(div);
-    });
-}
-
-click.flatMap(() => load("movies.json")).subscribe(movies => renderMovies(movies));
+/* Output:
+    Hello Namita
+    Hello Amit
+    Hello Rohit
+    Hello Neetika
+ */
 
